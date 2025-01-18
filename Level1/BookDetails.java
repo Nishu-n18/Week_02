@@ -7,6 +7,12 @@ class Book{
     String title;
     String author;
     double price;
+    //Default constructor
+    Book(){
+        title="Harry Potter";
+        author="J.K Rowling";
+        price=100.0;
+    }
     //Constructor
     Book(String title,String author, double price){
         this.title=title;
@@ -21,6 +27,10 @@ class Book{
 public class BookDetails {
     public static void main(String[] args) {
         Scanner sc=new Scanner(System.in);
+        //create object for default constructor
+        Book obj1=new Book();
+        System.out.println("obj1 ");
+        obj1.displayBookDetails();
         //Take inputs from users
         String title=sc.next();
         String author=sc.next();
