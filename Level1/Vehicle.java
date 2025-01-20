@@ -1,42 +1,46 @@
 package Level1;
 
 public class Vehicle {
+    static int registrationFee=200;//static variable
     String ownerName;
     String vehicleType;
-    static double registrationFee = 100.0;
-
-    // Constructor to initialize vehicle details
-    public Vehicle(String ownerName, String vehicleType) {
-        this.ownerName = ownerName;
-        this.vehicleType = vehicleType;
+    final int registrationNumber;//final variable
+    //static method to update registration fee
+    static void updateRegistrationFee(int newRegistrationFee){
+        registrationFee=newRegistrationFee;
     }
+    //constructor
+    Vehicle(String ownerName,String vehicleType,final int registrationNumber){
+        this.ownerName=ownerName;
+        this.vehicleType=vehicleType;
+        this.registrationNumber=registrationNumber;
 
-    // Instance method to display vehicle details
-    public void displayVehicleDetails() {
-        System.out.println("Owner Name: " + ownerName);
-        System.out.println("Vehicle Type: " + vehicleType);
-        System.out.println("Registration Fee: $" + registrationFee);
     }
-
-    // Class method to update the registration fee
-    public static void updateRegistrationFee(double newFee) {
-        registrationFee = newFee;
+    //method to display details
+    void displayDetails(){
+        //check if an  object is an instance of Vehicle
+        if(this instanceof Vehicle) {
+            System.out.println("Owner name:" + ownerName);
+            System.out.println("Vehicle type: " + vehicleType);
+            System.out.println("registration number " + registrationNumber);
+            System.out.println("Registration fee " +registrationFee);
+        }
     }
 
     public static void main(String[] args) {
-        // Creating vehicle instances
-        Vehicle vehicle1 = new Vehicle("John Doe", "Car");
-        Vehicle vehicle2 = new Vehicle("Jane Smith", "Motorcycle");
-
-        // Displaying vehicle details before updating the registration fee
-        vehicle1.displayVehicleDetails();
-        vehicle2.displayVehicleDetails();
-
-        // Updating the registration fee using the class method
-        Vehicle.updateRegistrationFee(120.0);
-
-        // Displaying vehicle details after updating the registration fee
-        vehicle1.displayVehicleDetails();
-        vehicle2.displayVehicleDetails();
+        //create objects
+        Vehicle obj=new Vehicle("Nishu","Innova",2344);
+        Vehicle obj1=new Vehicle("Shobhit","Thar",7468);
+        //calling display method by using object
+        obj.displayDetails();
+        obj1.displayDetails();
+        System.out.println("Updated registration fee " );
+        //calling updated registration fee
+        Vehicle.updateRegistrationFee(500);
+        //Display after update
+        obj.displayDetails();
+        obj1.displayDetails();
     }
 }
+
+
