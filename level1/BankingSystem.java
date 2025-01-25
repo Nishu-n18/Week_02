@@ -1,114 +1,159 @@
 package level1;
-// Base class: BankAccount
-class BankAccount {
-    protected String accountNumber;
-    protected double balance;
+import java.util.ArrayList;
+import java.util.List;
 
-    public BankAccount(String accountNumber, double balance) {
+// Abstract class BankAccount
+abstract class BankAccount {
+    private String accountNumber;
+    private String holderName;
+    private double balance;
+
+    // Constructor
+    public BankAccount(String accountNumber, String holderName, double balance) {
         this.accountNumber = accountNumber;
+        this.holderName = holderName;
         this.balance = balance;
     }
 
+    // Getter and Setter methods (Encapsulation)
+    public String getAccountNumber() {
+        return accountNumber;
+    }
+
+    public void setAccountNumber(String accountNumber) {
+        this.accountNumber = accountNumber;
+    }
+
+    public String getHolderName() {
+        return holderName;
+    }
+
+    public void setHolderName(String holderName) {
+        this.holderName = holderName;
+    }
+
+    public double getBalance() {
+        return balance;
+    }
+
+    public void setBalance(double balance) {
+        this.balance = balance;
+    }
+
+    // Concrete methods for deposit and withdraw
     public void deposit(double amount) {
         if (amount > 0) {
             balance += amount;
-            System.out.println("Deposited " + amount + ". New balance is " + balance);
+            System.out.println("Deposited: " + amount + ", New Balance: " + balance);
         } else {
-            System.out.println("Deposit amount must be positive.");
+            System.out.println("Invalid deposit amount!");
         }
     }
 
     public void withdraw(double amount) {
         if (amount > 0 && amount <= balance) {
             balance -= amount;
-            System.out.println("Withdrawn " + amount + ". New balance is " + balance);
+            System.out.println("Withdrew: " + amount + ", New Balance: " + balance);
         } else {
-            System.out.println("Insufficient balance or invalid amount.");
+            System.out.println("Invalid or insufficient amount for withdrawal!");
         }
     }
 
-    public void displayBalance() {
-        System.out.println("Account Number: " + accountNumber + ", Balance: " + balance);
+    // Abstract method to calculate interest
+    public abstract double calculateInterest();
+
+    // Method to display account details
+    public void displayDetails() {
+        System.out.println("Account Number: " + accountNumber);
+        System.out.println("Holder Name: " + holderName);
+        System.out.println("Balance: " + balance);
     }
 }
 
-// Subclass: SavingsAccount
-class SavingsAccount extends BankAccount {
-    private double interestRate;
+// Interface Loanable
+interface Loanable {
+    void applyForLoan(double loanAmount);
+    double calculateLoanEligibility();
+}
 
-    public SavingsAccount(String accountNumber, double balance, double interestRate) {
-        super(accountNumber, balance);
+// SavingsAccount subclass
+class SavingsAccount extends BankAccount implements Loanable {
+    private double interestRate; // Annual interest rate
+
+    public SavingsAccount(String accountNumber, String holderName, double balance, double interestRate) {
+        super(accountNumber, holderName, balance);
         this.interestRate = interestRate;
     }
 
-    public void calculateInterest() {
-        double interest = balance * interestRate / 100;
-        System.out.println("Interest: " + interest);
-    }
-
-    public void displayAccountType() {
-        System.out.println("This is a Savings Account.");
-    }
-}
-
-// Subclass: CheckingAccount
-class CheckingAccount extends BankAccount {
-    private double withdrawalLimit;
-
-    public CheckingAccount(String accountNumber, double balance, double withdrawalLimit) {
-        super(accountNumber, balance);
-        this.withdrawalLimit = withdrawalLimit;
+    @Override
+    public double calculateInterest() {
+        return getBalance() * interestRate / 100;
     }
 
     @Override
-    public void withdraw(double amount) {
-        if (amount > withdrawalLimit) {
-            System.out.println("Withdrawal amount exceeds the limit of " + withdrawalLimit);
-        } else {
-            super.withdraw(amount);
-        }
+    public void applyForLoan(double loanAmount) {
+        System.out.println("Loan applied for amount: " + loanAmount);
     }
 
-    public void displayAccountType() {
-        System.out.println("This is a Checking Account.");
+    @Override
+    public double calculateLoanEligibility() {
+        return getBalance() * 5; // Loan eligibility is 5x the balance
     }
 }
 
-// Subclass: FixedDepositAccount
-class FixedDepositAccount extends BankAccount {
-    private int maturityPeriod;
+// CurrentAccount subclass
+class CurrentAccount extends BankAccount implements Loanable {
+    private double overdraftLimit;
 
-    public FixedDepositAccount(String accountNumber, double balance, int maturityPeriod) {
-        super(accountNumber, balance);
-        this.maturityPeriod = maturityPeriod;
+    public CurrentAccount(String accountNumber, String holderName, double balance, double overdraftLimit) {
+        super(accountNumber, holderName, balance);
+        this.overdraftLimit = overdraftLimit;
     }
 
-    public void displayAccountType() {
-        System.out.println("This is a Fixed Deposit Account.");
+    @Override
+    public double calculateInterest() {
+        return 0; // No interest for current accounts
     }
 
-    public void displayMaturityDetails() {
-        System.out.println("Maturity Period: " + maturityPeriod + " months");
+    @Override
+    public void applyForLoan(double loanAmount) {
+        System.out.println("Loan applied for amount: " + loanAmount);
+    }
+
+    @Override
+    public double calculateLoanEligibility() {
+        return getBalance() + overdraftLimit; // Loan eligibility includes overdraft limit
     }
 }
 
-// Example usage
+// Main class
 public class BankingSystem {
     public static void main(String[] args) {
-        SavingsAccount savings = new SavingsAccount("S123", 5000, 3.5);
-        savings.displayAccountType();
-        savings.displayBalance();
-        savings.calculateInterest();
+        // List of accounts
+        List<BankAccount> accounts = new ArrayList<>();
 
-        CheckingAccount checking = new CheckingAccount("C123", 2000, 500);
-        checking.displayAccountType();
-        checking.displayBalance();
-        checking.withdraw(600); // Exceeds withdrawal limit
-        checking.withdraw(400);
+        // Adding accounts to the list
+        accounts.add(new SavingsAccount("1499", "Nishu", 5000, 3.5));
+        accounts.add(new CurrentAccount("3200", "Nisha", 2000, 1000));
 
-        FixedDepositAccount fixedDeposit = new FixedDepositAccount("F123", 10000, 12);
-        fixedDeposit.displayAccountType();
-        fixedDeposit.displayBalance();
-        fixedDeposit.displayMaturityDetails();
+        // Process accounts
+        for (int i = 0; i < accounts.size(); i++) {
+            BankAccount account = accounts.get(i);
+            System.out.println("---------------");
+            account.displayDetails();
+
+            // Calculate interest
+            double interest = account.calculateInterest();
+            System.out.println("Calculated Interest: " + interest);
+
+            // Check loan eligibility if the account is loanable
+            if (account instanceof Loanable) {
+                Loanable loanable = (Loanable) account;
+                System.out.println("Loan Eligibility: " + loanable.calculateLoanEligibility());
+                loanable.applyForLoan(5000);
+            }
+
+            System.out.println();
+        }
     }
 }
